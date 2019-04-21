@@ -1,0 +1,10 @@
+2	SensorMountingBoard
+2	MotorBoxBack
+4	MotorBoxSide
+2	MotorBoxFront
+2	MotorBoxBottom
+2	SideBoard
+1	MidBoard
+1	TopBoard
+1	BottomBoard
+2	FrontBoard
