@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CORE;..\USER;..\STM32F4\inc;..\HARDWARE;..\SYSTEM</IncludePath>
+              <IncludePath>..\CORE;..\USER;..\STM32F4\inc;..\HARDWARE;..\SYSTEM;..\PAGES</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -672,6 +672,36 @@
               <FileType>5</FileType>
               <FilePath>..\HARDWARE\keyboard.h</FilePath>
             </File>
+            <File>
+              <FileName>parameter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\parameter.c</FilePath>
+            </File>
+            <File>
+              <FileName>parameter.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HARDWARE\parameter.h</FilePath>
+            </File>
+            <File>
+              <FileName>ads1256.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\ads1256.c</FilePath>
+            </File>
+            <File>
+              <FileName>ads1256.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HARDWARE\ads1256.h</FilePath>
+            </File>
+            <File>
+              <FileName>eo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\eo.c</FilePath>
+            </File>
+            <File>
+              <FileName>eo.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HARDWARE\eo.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -691,6 +721,36 @@
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SYSTEM\usart.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>PAGES</GroupName>
+          <Files>
+            <File>
+              <FileName>pages.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PAGES\pages.c</FilePath>
+            </File>
+            <File>
+              <FileName>MainPage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PAGES\MainPage.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADCPage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PAGES\ADCPage.c</FilePath>
+            </File>
+            <File>
+              <FileName>MotorPage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PAGES\MotorPage.c</FilePath>
+            </File>
+            <File>
+              <FileName>sensors.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PAGES\sensors.c</FilePath>
             </File>
           </Files>
         </Group>

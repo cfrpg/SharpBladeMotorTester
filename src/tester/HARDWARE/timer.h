@@ -2,6 +2,6 @@
 #define __TIMER_H
 #include "sys.h"
 
-void MainClockInit();
+void MainClockInit(void);
 
 #endif

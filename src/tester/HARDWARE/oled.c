@@ -30,12 +30,12 @@ void OledInit(void)
 	gi.GPIO_Pin=GPIO_Pin_8;
 	GPIO_Init(GPIOD,&gi);
 	
-	GPIO_PinAFConfig(GPIOB,GPIO_PinSource13,GPIO_AF_SPI1);
-	GPIO_PinAFConfig(GPIOB,GPIO_PinSource15,GPIO_AF_SPI1);
+	GPIO_PinAFConfig(GPIOB,GPIO_PinSource13,GPIO_AF_SPI2);
+	GPIO_PinAFConfig(GPIOB,GPIO_PinSource15,GPIO_AF_SPI2);
 	
 	RCC_APB1PeriphResetCmd(RCC_APB1Periph_SPI2,ENABLE);
 	RCC_APB1PeriphResetCmd(RCC_APB1Periph_SPI2,DISABLE);
-	//Init SPI1
+	//Init SPI2
 	si.SPI_Direction=SPI_Direction_1Line_Tx;
 	si.SPI_Mode=SPI_Mode_Master;
 	si.SPI_DataSize=SPI_DataSize_8b;

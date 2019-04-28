@@ -1,6 +1,6 @@
 #include "timer.h"
 
-void MainClockInit()
+void MainClockInit(void)
 {				
 	TIM_TimeBaseInitTypeDef  ti;
 	NVIC_InitTypeDef ni;
@@ -14,7 +14,7 @@ void MainClockInit()
 	TIM_Cmd(TIM3, ENABLE);
 	ni.NVIC_IRQChannel = TIM3_IRQn;
 	ni.NVIC_IRQChannelPreemptionPriority = 1; 
-	ni.NVIC_IRQChannelSubPriority = 3;
+	ni.NVIC_IRQChannelSubPriority = 2;
 	ni.NVIC_IRQChannelCmd = ENABLE;	
 	NVIC_Init(&ni);	
 }
