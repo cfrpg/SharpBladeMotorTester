@@ -1,4 +1,5 @@
 #include "pages.h"
+#include "pwm.h"
 
 struct
 {
@@ -7,6 +8,7 @@ struct
 	s32 curr;
 	s32 thro;
 	u8 state;
+	u8 lastarmed;
 } motor;
 
 void PageInit_Motor(u8 f)
@@ -18,25 +20,102 @@ void PageInit_Motor(u8 f)
 		motor.curr=0;
 		motor.state=0;
 		motor.thro=0;
+		motor.state=0;
+		motor.lastarmed=0;
 		return;
 	}
 	OledClear(0);
 	PagesDrawHeader(MotorPage,"Motor");
-	OledDispString(0,1,"DISARMD",0);
+	OledDispString(0,1,"DISARMED",0);
 	OledDispString(0,2,"THRO:",0);
 	OledDispString(0,3,"RPM :",0);
 	OledDispString(0,4,"VOLT:",0);
 	OledDispString(0,5,"CURR:",0);
+	if(PWMIsArmed())
+	{
+		OledDispString(0,15,"    ",0);
+		OledDispString(0,1,"ARMED   ",0);
+	}
+	else
+	{
+		OledDispString(0,15,"CALI",0);
+		OledDispString(0,1,"DISARMED",0);
+	}
 }
 
 void PageUpdate_Motor(void)
 {
 	u8 key=currKey&(currKey^lastKey);
-	
-	OledDispFixed(5,2,motor.thro,1,5,0);
-	OledDispInt(5,3,motor.rpm,7,0);
+	u8 armed=PWMIsArmed();
+	switch(motor.state)
+	{
+		case 0://normal
+			if(armed)
+			{				
+				if(motor.lastarmed==0)
+				{
+					OledDispString(0,15,"    ",0);
+					OledDispString(0,1,"ARMED   ",0);
+				}
+				if(currWheel>lastWheel)
+					sys.pwm[0]+=10;
+				if(currWheel<lastWheel)
+					sys.pwm[0]-=10;
+				PWMSet(sys.pwm[0],sys.pwm[1],sys.pwm[2],sys.pwm[3]);
+				if(key&KEY_D)
+				{
+					PWMDisarm();
+				}
+			}
+			else
+			{
+				if(motor.lastarmed)
+				{
+					OledDispString(0,15,"CALI",0);
+					OledDispString(0,1,"DISARMED",0);
+				}
+				if(key&KEY_A)
+				{
+					motor.state=1;
+					PWMArm();
+					PWMSet(1000,1000,1000,1000);
+				}
+				if(key&KEY_D)
+				{
+					PWMArm();
+				}
+			}
+		break;
+		case 1://cali esc
+			OledDispString(0,1,"ARMED    ",0);
+			OledDispString(0,15,"SET ",0);
+			if(key&KEY_A)
+			{
+				motor.state=2;				
+				PWMSet(0,0,0,0);
+			}
+		break;
+		case 2://cali esc
+			OledDispString(0,1,"ARMED    ",0);
+			OledDispString(0,15,"OK  ",0);
+			if(key&KEY_A)
+			{
+				motor.state=0;				
+				PWMDisarm();
+			}
+		break;
+	}
+	motor.lastarmed=armed;
+	OledDispFixed(5,2,sys.pwm[0],1,5,0);
+	OledDispInt(5,3,sys.rpm,7,0);
 	OledDispFixed(5,4,motor.volt,3,6,0);
 	OledDispFixed(5,5,motor.curr,3,6,0);
-	if(key&KEY_D)
-		PagesNext(1);
+	if(motor.state==0)
+	{
+		if(key&KEY_LEFT)
+			PagesNext(-1);
+		if(key&KEY_RIGHT)
+			PagesNext(1);
+	}
+
 }

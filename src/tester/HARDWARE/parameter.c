@@ -48,5 +48,8 @@ void ParamReset(void)
 {
 	params.headFlag=0xCFCFCFCF;
 	params.version=0x00010000;
+	params.pwm_min=1000;
+	params.pwm_max=2000;
+	params.pwm_disarmed=900;
 	params.tailFlag=0xFCFCFCFC;
 }

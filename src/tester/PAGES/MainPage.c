@@ -18,6 +18,8 @@ void PageInit_main(u8 f)
 void PageUpdate_main(void)
 {
 	u8 key=currKey&(currKey^lastKey);
-	if(key&KEY_D)
+	if(key&KEY_LEFT)
+		PagesNext(-1);
+	if(key&KEY_RIGHT)
 		PagesNext(1);
 }

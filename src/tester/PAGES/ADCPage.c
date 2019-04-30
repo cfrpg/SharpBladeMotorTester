@@ -65,6 +65,8 @@ void PageUpdate_ADC(void)
 	}
 	cpu=(cpucnt+10000-cpu)%10000;
 	OledDispInt(4,13,cpu,4,0);
-	if(key&KEY_D)
+	if(key&KEY_LEFT)
+		PagesNext(-1);
+	if(key&KEY_RIGHT)
 		PagesNext(1);
 }

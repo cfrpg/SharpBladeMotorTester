@@ -702,6 +702,16 @@
               <FileType>5</FileType>
               <FilePath>..\HARDWARE\eo.h</FilePath>
             </File>
+            <File>
+              <FileName>pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\pwm.c</FilePath>
+            </File>
+            <File>
+              <FileName>pwm.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HARDWARE\pwm.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

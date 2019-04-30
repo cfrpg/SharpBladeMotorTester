@@ -9,6 +9,7 @@
 #include "pages.h"
 #include "ads1256.h"
 #include "eo.h"
+#include "pwm.h"
 
 u16 tick[3]={0,0,0};
 u16 cpucnt=0;
@@ -19,6 +20,8 @@ s32 currWheel=0;
 
 u8 currpage;
 systemState sys;
+
+
 
 int main(void)
 {
@@ -32,6 +35,7 @@ int main(void)
 	KeyInit();
 	ADS1256Init();
 	EOInit();
+	PWMInit();
 		
 	OledClear(0x00);
 	OledDispString(0,0,"== SB Motor Tester ==",0);
@@ -74,9 +78,11 @@ int main(void)
 			tick[0]=0;
 			LEDFlip();
 		}
-		if(tick[1]>500)
+		if(tick[1]>50)
 		{
-			tick[1]=0;			
+			tick[1]=0;
+			
+			
 		}
 		if(tick[2]>50)
 		{
@@ -87,6 +93,7 @@ int main(void)
 			PagesUpdate();			
 			lastKey=currKey;
 			lastWheel=currWheel;
+			
 		}
 	}
 }

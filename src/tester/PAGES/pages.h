@@ -16,6 +16,7 @@ typedef struct
 	s32 ADCRawData[8];
 	float ADCData[8];
 	u32 rpm;
+	u16 pwm[4];
 	u8 adcEn;
 	
 } systemState;

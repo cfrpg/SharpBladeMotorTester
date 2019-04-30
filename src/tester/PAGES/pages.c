@@ -4,6 +4,10 @@
 void PagesInit(void)
 {	
 	sys.adcEn=0;
+	sys.pwm[0]=0;
+	sys.pwm[1]=0;
+	sys.pwm[2]=0;
+	sys.pwm[3]=0;
 	PageInit_main(1);
 	PageInit_ADC(1);
 	PageInit_Motor(1);

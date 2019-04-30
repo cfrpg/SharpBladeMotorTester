@@ -9,6 +9,9 @@ typedef struct
 {
 	u32 headFlag;	
 	u32 version;
+	u32 pwm_min;
+	u32 pwm_max;
+	u32 pwm_disarmed;
 	u32 tailFlag;
 } ParameterSet;
 
