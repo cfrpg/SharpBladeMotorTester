@@ -3,9 +3,9 @@
 #include "sys.h"
 
 #define ADS_CS PDout(1)
-#define ADS_SYNC PDout(0)
+#define ADS_SYNC PDout(3)
 #define ADS_RST PDout(2)
-#define ADS_DRDY PDin(3)
+#define ADS_DRDY PDin(0)
 #define ADS_DI PCout(12)
 #define ADS_DO PCin(11)
 #define ADS_SCK PCout(10)
@@ -62,10 +62,14 @@
 #define ADS_REG_FSC1    9 // xxH
 #define ADS_REG_FSC2    10 // xxH
 
+extern u16 cpucnt;
+extern u16 ADSCpu2;
+
 void ADS1256Init(void);
 s32 ADSReadChannel(u8 ch);
 void ADSStartUp(u8 gain,u8 rate);
 void ADSSetChannel(u8 ch);
 s32 ADSReadCurrChannel(void);
+void ADSReadAllChannel(s32 data[]);
 
 #endif

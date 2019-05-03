@@ -5,30 +5,25 @@ u32 EOcnt;
 
 void UpdateADC(void)
 {
-	u8 i,j;
+	u8 i;
+	ADSReadAllChannel(sys.ADCRawData);
 	for(i=0;i<8;i++)
-	{
-		sys.ADCRawData[i]=0;
-	}
-	for(j=0;j<8;j++)
 	{		
-		for(i=0;i<8;i++)
-		{
-			sys.ADCRawData[i]+=ADSReadChannel(i);			
-		}
-	}
-	for(i=0;i<8;i++)
-	{
-		sys.ADCRawData[i]>>=3;
-		sys.ADCData[i]=((float)sys.ADCRawData[i])/(1<<23)*5;
-	}
-	
+		sys.sensors.ADCData[i]=((float)sys.ADCRawData[i])/(1<<23)*5;
+	}	
+}
+
+void SendSensorData(void)
+{
+	sys.sensors.data[0]=sys.rpm;
+	LinkSendData(&sys.sensors,sizeof(SensorDataPackage));
 }
 
 void UpdateSensors(void)
 {
-	if(sys.adcEn)
+	//if(sys.adcEn)
 		UpdateADC();
+	SendSensorData();
 }
 
 void TIM8_BRK_TIM12_IRQHandler(void)

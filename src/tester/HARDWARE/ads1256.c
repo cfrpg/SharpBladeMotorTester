@@ -2,8 +2,14 @@
 #include "delay.h"
 #include "stdio.h"
 
+s32 ADSBuff[8];
+u8 ADSCurrCh;
+
+u16 ADSCpu;
+u16 ADSCpu2;
 void ADS1256Init(void)
 {
+	u8 i;
 	GPIO_InitTypeDef gi;
 	SPI_InitTypeDef si;
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC|RCC_AHB1Periph_GPIOD,ENABLE);
@@ -19,22 +25,46 @@ void ADS1256Init(void)
 	gi.GPIO_PuPd=GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOC,&gi);
 	//Init common GPIO
-	gi.GPIO_Pin=GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_2;
+	gi.GPIO_Pin=GPIO_Pin_3|GPIO_Pin_1|GPIO_Pin_2;
 	gi.GPIO_Mode=GPIO_Mode_OUT;
 	gi.GPIO_PuPd=GPIO_PuPd_UP;
 	GPIO_Init(GPIOD,&gi);
-	gi.GPIO_Pin=GPIO_Pin_3;
+	gi.GPIO_Pin=GPIO_Pin_0;
 	gi.GPIO_Mode=GPIO_Mode_IN;
 	gi.GPIO_PuPd=GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOD,&gi);
 	
+	EXTI_InitTypeDef ei;
+	NVIC_InitTypeDef ni;
+	
+	for(i=0;i<8;i++)
+	{
+		ADSBuff[i]=0;
+	}
+
+	ADSCurrCh=0;
+	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG,ENABLE);
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD,EXTI_PinSource0);
+	
+	ei.EXTI_Line=EXTI_Line0;
+	ei.EXTI_Mode=EXTI_Mode_Interrupt;
+	ei.EXTI_Trigger=EXTI_Trigger_Falling;
+	ei.EXTI_LineCmd=ENABLE;
+	EXTI_Init(&ei);
+	
+	ni.NVIC_IRQChannel=EXTI0_IRQn;
+	ni.NVIC_IRQChannelCmd=ENABLE;
+	ni.NVIC_IRQChannelPreemptionPriority=2;
+	ni.NVIC_IRQChannelSubPriority=2;
+	NVIC_Init(&ni);
 	
 	ADS_CS=0;
 	ADS_SYNC=1;
 	ADS_RST=1;
 	ADS_CS=1;
 	ADS_SCK=0;
-	ADS_DI=1;
+	ADS_DI=1;	
 }
 
 void ADSDelaySCK(void)
@@ -45,7 +75,7 @@ void ADSDelaySCK(void)
 
 void ADSDelayData(void)
 {
-	delay_us(10);
+	delay_us(9);
 }
 
 void ADSSendByte(u8 b)
@@ -116,8 +146,8 @@ void ADSSendCmd(u8 cmd)
 void ADSStartUp(u8 gain,u8 rate)
 {
 	u8 buf[4]={0};
-	//STATUS:ORDER,ACAL,BUFEN,DRDY
-	buf[0]=(0<<3)|(1<<2)|(1<<1);
+	//STATUS:ORDER,ACAL,BUFEN
+	buf[0]=(0<<3)|(1<<2)|(0<<1);
 	//MUX
 	buf[1]=0x08;
 	//ADCON
@@ -147,10 +177,25 @@ void ADSSetDiffChannel(u8 ch)
 	ADSWriteReg(ADS_REG_MUX,((ch<<1)<<4)|((ch<<1)-1));
 }
 
-void ADSWaitDRDY(void)
+void ADSWaitDRDYLow(void)
 {	
 	u32 t=0;
 	while(ADS_DRDY)
+	{
+		t++;
+		if(t>0x00300000)
+		{
+			printf("ADS DRDY Time out\r\n");
+			break;
+		}
+	}
+	//printf("%d\r\n",t);
+}
+
+void ADSWaitDRDYHigh(void)
+{	
+	u32 t=0;
+	while(!ADS_DRDY)
 	{
 		t++;
 		if(t>0x00300000)
@@ -185,22 +230,67 @@ s32 ADSReadData(void)
 
 s32 ADSReadChannel(u8 ch)
 {
-	ADSWaitDRDY();	
+	ADSWaitDRDYHigh();
+	ADSWaitDRDYLow();	
 	ADSSetChannel(ch);
-	delay_us(5);
+	delay_us(5);	
 	ADSSendCmd(ADS_CMD_SYNC);
-	delay_us(5);
+	delay_us(5);	
 	ADSSendCmd(ADS_CMD_WAKEUP);
 	delay_us(25);
+	ADSReadData();
+	ADSWaitDRDYHigh();
+	ADSWaitDRDYLow();
 	return ADSReadData();	
 }
 
 s32 ADSReadCurrChannel(void)
 {
-	ADSWaitDRDY();		
+	ADSWaitDRDYLow();
 	ADSSendCmd(ADS_CMD_SYNC);
 	delay_us(5);
 	ADSSendCmd(ADS_CMD_WAKEUP);
-	delay_us(25);
+	delay_us(5);
 	return ADSReadData();	
+}
+
+void ADSReadAllChannel(s32 data[])
+{
+	u8 i;	
+	for(i=0;i<8;i++)
+		data[i]=ADSBuff[i];	
+}
+
+void ADSIRQHandler(void)
+{
+	u16 t;
+	ADSSetChannel(ADSCurrCh);
+	delay_us(5);	
+	ADSSendCmd(ADS_CMD_SYNC);
+	delay_us(5);	
+	ADSSendCmd(ADS_CMD_WAKEUP);
+	delay_us(25);
+	if(ADSCurrCh==0)
+	{
+		ADSBuff[7]=ADSReadData();
+		ADSCpu2=(cpucnt+10000-ADSCpu)%10000;
+		//printf("%d\r\n",ADSCpu);
+		ADSCpu=cpucnt;
+	}
+	else		
+	{
+		ADSBuff[ADSCurrCh-1]=ADSReadData();
+	}
+	ADSCurrCh++;
+	ADSCurrCh&=0x07;
+}
+
+void EXTI0_IRQHandler(void)
+{
+	if (EXTI_GetITStatus(EXTI_Line0) != RESET)
+	{
+		EXTI_ClearITPendingBit(EXTI_Line0);		
+		ADSIRQHandler();		
+		EXTI_ClearITPendingBit(EXTI_Line0);
+	}
 }

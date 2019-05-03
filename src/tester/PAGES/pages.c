@@ -8,6 +8,11 @@ void PagesInit(void)
 	sys.pwm[1]=0;
 	sys.pwm[2]=0;
 	sys.pwm[3]=0;
+	
+	sys.sensors.header.stx=LINKSTX;
+	sys.sensors.header.len=DataLen[SENSOR_DATA];
+	sys.sensors.header.fun=SENSOR_DATA;	
+	
 	PageInit_main(1);
 	PageInit_ADC(1);
 	PageInit_Motor(1);

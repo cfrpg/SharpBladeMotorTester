@@ -31,23 +31,15 @@ void PageUpdate_ADC(void)
 	u8 i,j;
 	u8 key=currKey&(currKey^lastKey);
 	u16 cpu=cpucnt;
+//	ADSReadAllChannel(sys.ADCRawData);
 //	for(i=0;i<8;i++)
 //	{
-//		sys.rawData[i]=0;
+//		sys.ADCRawData[i]>>=0;
+//		sys.sensors.ADCData[i]=((float)sys.ADCRawData[i])/(1<<23)*5;
 //	}
-//	for(j=0;j<8;j++)
-//	{		
-//		for(i=0;i<8;i++)
-//		{
-//			sys.rawData[i]+=ADSReadChannel(i);			
-//		}
-//	}
-//	for(i=0;i<8;i++)
-//	{
-//		sys.rawData[i]>>=3;
-//		sys.data[i]=((float)sys.rawData[i])/(1<<23)*5;
-//	}
-//	
+	
+	
+	
 	if(key&KEY_A)
 		adcp.state=0;
 	if(key&KEY_C)
@@ -60,11 +52,11 @@ void PageUpdate_ADC(void)
 		}
 		else
 		{
-			OledDispFixed(4,i+2,(s32)(sys.ADCData[i]*1e6),6,11,0);
+			OledDispFixed(4,i+2,(s32)(sys.sensors.ADCData[i]*1e6),6,11,0);
 		}
 	}
 	cpu=(cpucnt+10000-cpu)%10000;
-	OledDispInt(4,13,cpu,4,0);
+	OledDispInt(4,13,ADSCpu2,4,0);
 	if(key&KEY_LEFT)
 		PagesNext(-1);
 	if(key&KEY_RIGHT)

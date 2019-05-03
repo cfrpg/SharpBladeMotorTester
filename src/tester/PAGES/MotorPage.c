@@ -61,9 +61,15 @@ void PageUpdate_Motor(void)
 					sys.pwm[0]+=10;
 				if(currWheel<lastWheel)
 					sys.pwm[0]-=10;
+				if(sys.pwm[0]>10000)
+					sys.pwm[0]=0;
+				if(sys.pwm[0]>1000)
+					sys.pwm[0]=1000;
+				
 				PWMSet(sys.pwm[0],sys.pwm[1],sys.pwm[2],sys.pwm[3]);
 				if(key&KEY_D)
 				{
+					sys.pwm[0]=0;
 					PWMDisarm();
 				}
 			}

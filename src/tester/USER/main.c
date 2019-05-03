@@ -10,6 +10,7 @@
 #include "ads1256.h"
 #include "eo.h"
 #include "pwm.h"
+#include "sblink.h"
 
 u16 tick[3]={0,0,0};
 u16 cpucnt=0;
@@ -36,6 +37,7 @@ int main(void)
 	ADS1256Init();
 	EOInit();
 	PWMInit();
+	LinkInit();
 		
 	OledClear(0x00);
 	OledDispString(0,0,"== SB Motor Tester ==",0);
@@ -65,7 +67,7 @@ int main(void)
 	while(tick[0]<200);
 	LEDSet(1);
 	OledClear(0x00);	
-	ADSStartUp(0,ADS1256_7500SPS);
+	ADSStartUp(0,ADS1256_3750SPS);
 	
 	lastKey=0xFF;
 	currpage=0;
@@ -93,7 +95,7 @@ int main(void)
 			PagesUpdate();			
 			lastKey=currKey;
 			lastWheel=currWheel;
-			
+			//printf("%d\r\n",tick[2]);
 		}
 	}
 }
