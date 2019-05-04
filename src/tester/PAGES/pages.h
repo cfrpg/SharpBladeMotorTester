@@ -5,6 +5,7 @@
 #include "keyboard.h"
 #include "sblink.h"
 #include "stdio.h"
+#include "rtc.h"
 
 #define MainPage 0
 #define ADCPage 1
@@ -36,6 +37,7 @@ void PagesChangeTo(u8 p);
 void PagesNext(s8 d);
 void PagesUpdate(void);
 void PagesDrawHeader(u8 n,s8 *name);
+void PagesDrawStatusBar(void);
 
 void UpdateSensors(void);
 

@@ -1,6 +1,7 @@
 #ifndef __SBLINK_H
 #define __SBLINK_H
 #include "sys.h"
+#include "rtc.h"
 
 #define SENDBUFFSIZE 256
 #define LINKSTX 0xFC
@@ -9,7 +10,10 @@
 #define SENSOR_DATA 0x01
 
 extern const u8 DataLen[];
-
+extern u8 recBuff[2][256];
+extern u8 recBuffLen[2];
+extern u8 currBuff;
+extern u8 sblinkReady;
 
 typedef struct
 {
@@ -27,9 +31,16 @@ typedef struct
 	s32 data[4];
 } SensorDataPackage;
 
+typedef struct
+{
+	PackageHeader header;
+	DateTime time;
+} TimeDataPackage;
+
 extern u8 sendBuff[SENDBUFFSIZE];
 
 void LinkInit(void);
 void LinkSendData(void* buff,u8 len);
+u32 LinkPackTime();
 
 #endif

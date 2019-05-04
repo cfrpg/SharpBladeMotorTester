@@ -5,8 +5,98 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SBMTCS"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="SharpBladeMotorTester - cfrpg" Height="600" Width="800" Closing="Window_Closing">
+    <Window.Resources>
+        <Style TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+    </Window.Resources>
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="100"/>
+        </Grid.RowDefinitions>
+        <ListView x:Name="sensorDataList" ItemsSource="{Binding}">
+            <ListView.View>
+                <GridView >
+                    <GridView.Columns>
+                        <GridViewColumn Header="Log" Width="50">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding LogEnabled}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Name" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Name}" FontSize="16"  />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="RawValue" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Value,StringFormat={}{0:0.000000}}" FontSize="20"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Offset" Width="70">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Offset}" FontSize="16" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Scale" Width="70">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Scale}" FontSize="16" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Value" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding ScaledValue,StringFormat={}{0:0.000000}}" FontSize="20"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView.Columns>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Grid  Grid.Row="1" Grid.Column="0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="50"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Log Path" VerticalAlignment="Center" Margin="10,42,0,42"/>
+            <TextBox x:Name="pathText" Text="{Binding LogPath}" VerticalAlignment="Center" Grid.Column="1" Margin="5,41,5,41" />
+            <Button Name="pathBtn" Content="..." Grid.Column="2" VerticalAlignment="Center" Margin="10,0" Click="PathBtn_Click"/>
+        </Grid>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Local Time" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16"/>
+            <TextBlock  x:Name="localTimeText" Text="2019-05-01 12:00:00" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16"/>
+            <TextBlock Text="Remote Time" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16"/>
+            <TextBlock x:Name="remoteTimeText" Text="2019-05-01 12:00:00" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16"/>
+            <Button x:Name="timeSync" Content="Time Sync" Grid.Row="4" Margin="50,3" Click="TimeSync_Click"/>
+            <Button x:Name="logBtn" Content="Start Log" Grid.Row="6" Margin="50,3" Click="LogBtn_Click"/>
+        </Grid>
     </Grid>
 </Window>

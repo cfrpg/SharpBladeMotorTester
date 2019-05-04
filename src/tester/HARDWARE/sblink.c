@@ -4,6 +4,13 @@
 
 u8 sendBuff[SENDBUFFSIZE];
 u8 linkSeq;
+u8 recBuff[2][256];
+u8 recBuffLen[2];
+u8 currBuff;
+u8 recState;
+u8 sblinkReady;
+u8 recSum;
+u8 pkgLen;
 
 void LinkInit(void)
 {
@@ -34,6 +41,14 @@ void LinkInit(void)
 	USART_Init(USART2, &ui);
 	
 	USART_Cmd(USART2, ENABLE);
+	
+	ni.NVIC_IRQChannel=USART2_IRQn;
+	ni.NVIC_IRQChannelPreemptionPriority=2;
+	ni.NVIC_IRQChannelSubPriority=1;
+	ni.NVIC_IRQChannelCmd=ENABLE;
+	NVIC_Init(&ni);
+	
+	USART_ITConfig(USART2,USART_IT_RXNE,ENABLE);
 	
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1,ENABLE);
 	
@@ -66,7 +81,13 @@ void LinkInit(void)
 	ni.NVIC_IRQChannelCmd=ENABLE;
 	NVIC_Init(&ni);
 	
+	
+	
 	linkSeq=0;
+	recState=0;
+	currBuff=0;
+	recBuffLen[0]=0;
+	sblinkReady=0;
 }
 
 void LinkSendData(void* buff,u8 len)
@@ -91,6 +112,12 @@ void LinkSendData(void* buff,u8 len)
 	
 }
 
+u32 LinkPackTime()
+{
+	RTCReadTime();
+	return (time.hour<<22)|(time.min<<16)|(time.sec<<10)|time.ms;
+}
+
 void DMA1_Stream6_IRQHandler(void)
 {
 	if(DMA_GetFlagStatus(DMA1_Stream6,DMA_IT_TCIF6)==SET)
@@ -100,6 +127,78 @@ void DMA1_Stream6_IRQHandler(void)
 			DMA_ClearFlag(DMA1_Stream6,DMA_FLAG_DMEIF6);
 		}
 		DMA_ClearFlag(DMA1_Stream6,DMA_IT_TCIF6);
-	}
+	}		
+}
+
+void USART2_IRQHandler(void)
+{
+	
+	u8 b;
+	u8 curr=currBuff^1;
+	if(USART_GetITStatus(USART2,USART_IT_RXNE)!=RESET)
+	{
+		USART_ClearITPendingBit(USART2,USART_IT_RXNE);		
+		b=USART_ReceiveData(USART2);
+		//printf("RX %d %x\r\n",recState,b);
+		if(recState!=0)
+		{
+			if(recState<9)
+				recSum^=b;
+			recBuff[curr][recBuffLen[curr]]=b;
+			recBuffLen[curr]++;
+		}
+		switch(recState)
+		{
+			case 0://get STX
+				if(b==0xFC)
+				{
+					recBuff[curr][0]=b;
+					recSum=0^b;
+					recBuffLen[curr]=1;
+					recState=1;
+				}
+			break;
+			case 1://get LEN
+				pkgLen=b;
+				recState=2;
+			break;
+			case 2://get SEQ
+				recState=3;
+			break;
+			case 3://get FUN
+				recState=4;
+			break;
+			case 4://get TIM1
+				recState=5;
+			break;
+			case 5://get TIM2
+				recState=6;
+			break;
+			case 6://get TIM3
+				recState=7;
+			break;
+			case 7://get TIM4
+				recState=8;
+			break;
+			case 8:
+				if(recBuffLen[curr]==pkgLen+8)
+				{
+					recState=9;
+				}
+			break;
+			case 9:
+				if(recSum==b)
+				{
+					currBuff^=1;
+					sblinkReady=1;
+				}
+				else
+				{
+					printf("Bad checksum %d %d\r\n",recSum,b);
+				}
+				recState=0;
+			break;
+		}
 		
+	}
 }

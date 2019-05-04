@@ -2,6 +2,7 @@
 #include "delay.h"
 
 DateTime time;
+u16 RTCcnt;
 
 void RTCSetWakeUp(u32 wks,u16 cnt)
 {
@@ -29,6 +30,7 @@ void RTCSetWakeUp(u32 wks,u16 cnt)
 	ni.NVIC_IRQChannelSubPriority = 0x02;
 	ni.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&ni);
+	RTCcnt=0;
 }
 
 u8 RTCInit()
@@ -49,7 +51,10 @@ u8 RTCInit()
 			delay_ms(10);
 		}
 		if(t>=250)
+		{
+			printf("rtc error\r\n");
 			return 1;
+		}
 		RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);
 		RCC_RTCCLKCmd(ENABLE);
 		ri.RTC_AsynchPrediv=0x7F;
@@ -62,7 +67,7 @@ u8 RTCInit()
 		
 		RTC_WriteBackupRegister(RTC_BKP_DR0,0x5050);
 	}
-	
+	RTCSetWakeUp(RTC_WakeUpClock_CK_SPRE_16bits,0);
 	
 	return 0;
 }
@@ -102,5 +107,16 @@ void RTCReadTime(void)
 	time.hour=rt.RTC_Hours;
 	time.min=rt.RTC_Minutes;
 	time.sec=rt.RTC_Seconds;
-	
+	time.ms=RTCcnt;
 }
+
+void RTC_WKUP_IRQHandler(void)
+{    
+	if(RTC_GetFlagStatus(RTC_FLAG_WUTF)==SET)//WK_UP中断?
+	{ 
+		RTC_ClearFlag(RTC_FLAG_WUTF);	//清除中断标志
+		RTCcnt=0;
+	}   
+	EXTI_ClearITPendingBit(EXTI_Line22);//清除中断线22的中断标志 								
+}
+ 

@@ -41,6 +41,7 @@ void PagesChangeTo(u8 p)
 			break;
 		}
 	}
+	PagesDrawStatusBar();
 }
 
 void PagesNext(s8 d)
@@ -54,6 +55,17 @@ void PagesNext(s8 d)
 	}
 	if(d>0)
 		PagesChangeTo((currpage+1)%PageNum);
+}
+
+void PagesDrawStatusBar(void)
+{	
+	OledDispString(0,0,"  -  -     :  :      ",0);
+	OledDispInt(0,0,time.year,2,0);
+	OledDispInt(3,0,time.month,2,0);
+	OledDispInt(6,0,time.day,2,0);
+	OledDispInt(9,0,time.hour,2,0);
+	OledDispInt(12,0,time.min,2,0);
+	OledDispInt(15,0,time.sec,2,0);
 }
 
 void PagesUpdate(void)
@@ -79,13 +91,13 @@ void PagesUpdate(void)
 
 void PagesDrawHeader(u8 n,s8 *name)
 {
-	OledDispString(0,0,"=",0);
-	OledDispString(19,0,"=",0);
-	OledDispString(4,0,"/",0);
-	OledDispInt(5,0,PageNum,0,0);
+	OledDispString(0,1,"=",0);
+	OledDispString(19,1,"=",0);
+	OledDispString(4,1,"/",0);
+	OledDispInt(5,1,PageNum,0,0);
 	if(n>8)
-		OledDispInt(2,0,n+1,0,0);
+		OledDispInt(2,1,n+1,0,0);
 	else
-		OledDispInt(3,0,n+1,0,0);
-	OledDispString(8,0,name,0);
+		OledDispInt(3,1,n+1,0,0);
+	OledDispString(8,1,name,0);
 }

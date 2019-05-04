@@ -16,6 +16,7 @@ void UpdateADC(void)
 void SendSensorData(void)
 {
 	sys.sensors.data[0]=sys.rpm;
+	sys.sensors.header.time=LinkPackTime();
 	LinkSendData(&sys.sensors,sizeof(SensorDataPackage));
 }
 

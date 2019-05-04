@@ -13,6 +13,7 @@ typedef struct
 } DateTime;
 
 extern DateTime time;
+extern u16 RTCcnt;
 
 u8 RTCInit();
 ErrorStatus RTCSetTime(u8 h,u8 m,u8 s);

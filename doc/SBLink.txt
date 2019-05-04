@@ -1,0 +1,18 @@
+SBLink Package Format
+Long	Short
+Byte	Byte	Value	Content
+0		0		0xFC	u8 STX
+1		1		n		u8 LEN
+2		x		0-255	u8 SEQ
+3		2		0-255	u8 FUN
+4-7		x				u32 TIME
+8-n+7	3-n+2			u8 DATA[n]
+n+8		n+3				u8 SUM
+
+Time Format
+Bit		Content
+[0:9]	MilliSecond
+[10:15]	Second
+[16:21] Minite
+[22:26] Hour
+[27:31] Reserve
