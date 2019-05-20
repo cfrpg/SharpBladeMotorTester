@@ -13,6 +13,7 @@
 #include "pwm.h"
 #include "sblink.h"
 #include "rtc.h"
+#include "adc.h"
 
 u16 tick[3]={0,0,0};
 u16 cpucnt=0;
@@ -41,6 +42,7 @@ int main(void)
 	PWMInit();
 	LinkInit();
 	RTCInit();
+	//ADCInit();
 		
 	OledClear(0x00);
 	OledDispString(0,0,"== SB Motor Tester ==",0);

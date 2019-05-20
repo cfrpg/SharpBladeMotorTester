@@ -23,7 +23,7 @@ void PageInit_ADC(u8 f)
 	OledDispString(0,13,"CPU:",0);
 	OledDispString(0,15,"RAW",0);
 	OledDispString(15,15,"SCALED",0);
-	
+	OledDispString(9,15,"RST",0);
 }
 
 void PageUpdate_ADC(void)
@@ -37,13 +37,13 @@ void PageUpdate_ADC(void)
 //		sys.ADCRawData[i]>>=0;
 //		sys.sensors.ADCData[i]=((float)sys.ADCRawData[i])/(1<<23)*5;
 //	}
-	
-	
-	
+		
 	if(key&KEY_A)
 		adcp.state=0;
 	if(key&KEY_C)
 		adcp.state=1;
+	if(key&KEY_B)
+		ADSStartUp(0,ADS1256_1000SPS);
 	for(i=0;i<8;i++)
 	{
 		if(adcp.state==0)
@@ -54,7 +54,7 @@ void PageUpdate_ADC(void)
 		{
 			OledDispFixed(4,i+2,(s32)(sys.sensors.ADCData[i]*1e6),6,11,0);
 		}
-	}
+	}	
 	cpu=(cpucnt+10000-cpu)%10000;
 	OledDispInt(4,13,ADSCpu2,4,0);
 	if(key&KEY_LEFT)

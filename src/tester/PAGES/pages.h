@@ -16,6 +16,7 @@
 typedef struct
 {
 	s32 ADCRawData[8];
+	float AuxADCData[2];
 	SensorDataPackage sensors;
 	s32 rpm;
 	u16 pwm[4];

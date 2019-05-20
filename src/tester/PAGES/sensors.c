@@ -1,6 +1,6 @@
 #include "pages.h"
 #include "ads1256.h"
-
+#include "adc.h"
 u32 EOcnt;
 
 void UpdateADC(void)
@@ -10,12 +10,16 @@ void UpdateADC(void)
 	for(i=0;i<8;i++)
 	{		
 		sys.sensors.ADCData[i]=((float)sys.ADCRawData[i])/(1<<23)*5;
-	}	
+	}
+//	ADCReadVol(sys.AuxADCData);	
+//	sys.sensors.ADCData[6]=sys.AuxADCData[0];
+//	sys.sensors.ADCData[7]=sys.AuxADCData[1];
 }
 
 void SendSensorData(void)
 {
 	sys.sensors.data[0]=sys.rpm;
+	sys.sensors.data[1]=sys.pwm[0];
 	sys.sensors.header.time=LinkPackTime();
 	LinkSendData(&sys.sensors,sizeof(SensorDataPackage));
 }
