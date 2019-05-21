@@ -1,5 +1,6 @@
 #include "rtc.h"
 #include "delay.h"
+#include "stdio.h"
 
 DateTime time;
 u16 RTCcnt;

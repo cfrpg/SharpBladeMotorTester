@@ -233,7 +233,7 @@ void OledSetRev(u8 x,u8 y,s8 len,u8 f)
 
 void OledRefreshPart(u8 x,u8 y,s8 len)
 {	
-	s8 i,j,k,l;
+	s8 j,k,l;
 	u16 m=1<<y;
 	u8 c;
 	oledSelectRect(y<<3,(y<<3)+7,x*3,(x+len)*3-1);

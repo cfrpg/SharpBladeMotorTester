@@ -15,7 +15,7 @@ void PageInit_ADC(u8 f)
 	}
 	OledClear(0);
 	PagesDrawHeader(ADCPage,"ADC");
-	for(i=0;i<8;i++)
+	for(i=0;i<10;i++)
 	{
 		OledDispString(0,i+2,"Ch",0);
 		OledDispInt(2,i+2,i,1,0);
@@ -28,7 +28,7 @@ void PageInit_ADC(u8 f)
 
 void PageUpdate_ADC(void)
 {
-	u8 i,j;
+	u8 i;
 	u8 key=currKey&(currKey^lastKey);
 	u16 cpu=cpucnt;
 //	ADSReadAllChannel(sys.ADCRawData);
@@ -52,9 +52,13 @@ void PageUpdate_ADC(void)
 		}
 		else
 		{
-			OledDispFixed(4,i+2,(s32)(sys.sensors.ADCData[i]*1e6),6,11,0);
+			OledDispFixed(4,i+2,(s32)(sys.sensors.ADCData[i]*1e6f),6,11,0);
 		}
 	}	
+	for(i=0;i<2;i++)
+	{
+		OledDispFixed(4,i+10,(s32)(sys.sensors.ADCData[i+8]*1e6f),6,11,0);
+	}
 	cpu=(cpucnt+10000-cpu)%10000;
 	OledDispInt(4,13,ADSCpu2,4,0);
 	if(key&KEY_LEFT)

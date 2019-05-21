@@ -11,7 +11,6 @@ void ADS1256Init(void)
 {
 	u8 i;
 	GPIO_InitTypeDef gi;
-	SPI_InitTypeDef si;
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC|RCC_AHB1Periph_GPIOD,ENABLE);
 	//Init SPI GPIO
 	gi.GPIO_Pin=GPIO_Pin_10|GPIO_Pin_12;
@@ -263,7 +262,7 @@ void ADSReadAllChannel(s32 data[])
 
 void ADSIRQHandler(void)
 {
-	u16 t;
+//	u16 t;
 	ADSSetChannel(ADSCurrCh);
 	delay_us(5);	
 	ADSSendCmd(ADS_CMD_SYNC);

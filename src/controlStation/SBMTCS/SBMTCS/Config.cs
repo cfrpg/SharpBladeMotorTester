@@ -36,12 +36,12 @@ namespace SBMTCS
 
 		public static Config Default()
 		{
-			bool[] b = new bool[12];
-			double[] o = new double[12];
-			double[] s = new double[12];
-			string[] n = new string[12];
+			bool[] b = new bool[14];
+			double[] o = new double[14];
+			double[] s = new double[14];
+			string[] n = new string[14];
 
-			for(int i=0;i<12;i++)
+			for(int i=0;i<14;i++)
 			{
 				b[i] = true;
 				o[i] = 0;

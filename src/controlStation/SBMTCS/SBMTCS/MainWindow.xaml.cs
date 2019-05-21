@@ -46,7 +46,7 @@ namespace SBMTCS
 			initConfig();
 
 			sensorDatas = new ObservableCollection<SensorData>();
-			for(int i=0;i<12;i++)
+			for(int i=0;i<config.Offsets.Length;i++)
 			{
 				sensorDatas.Add(new SensorData()
 				{
@@ -104,11 +104,11 @@ namespace SBMTCS
 			switch(package.Function)
 			{
 				case 1:
-					for(int i=0;i<8;i++)
+					for(int i=0;i<10;i++)
 					{
 						sensorDatas[i].Value = package.NextSingle();
 					}
-					for(int i=8;i<12;i++)
+					for(int i=10;i<14;i++)
 					{
 						sensorDatas[i].Value = package.NextInt32();
 					}
@@ -157,7 +157,7 @@ namespace SBMTCS
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			for (int i = 0; i < 12; i++)
+			for (int i = 0; i < config.Offsets.Length; i++)
 			{
 				config.Names[i] = sensorDatas[i].Name;
 				config.Offsets[i] = sensorDatas[i].Offset;

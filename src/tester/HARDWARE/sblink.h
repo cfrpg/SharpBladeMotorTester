@@ -27,7 +27,7 @@ typedef struct
 typedef struct
 {
 	PackageHeader header;
-	float ADCData[8];
+	float ADCData[10];
 	s32 data[4];
 } SensorDataPackage;
 
@@ -41,6 +41,6 @@ extern u8 sendBuff[SENDBUFFSIZE];
 
 void LinkInit(void);
 void LinkSendData(void* buff,u8 len);
-u32 LinkPackTime();
+u32 LinkPackTime(void);
 
 #endif

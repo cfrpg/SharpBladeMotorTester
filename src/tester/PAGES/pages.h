@@ -30,7 +30,7 @@ extern u8 currKey;
 extern s32 lastWheel;
 extern s32 currWheel;
 
-extern u8 currpage;
+extern s8 currpage;
 extern u16 cpucnt;
 
 void PagesInit(void);

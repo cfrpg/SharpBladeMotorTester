@@ -11,9 +11,7 @@ void UpdateADC(void)
 	{		
 		sys.sensors.ADCData[i]=((float)sys.ADCRawData[i])/(1<<23)*5;
 	}
-//	ADCReadVol(sys.AuxADCData);	
-//	sys.sensors.ADCData[6]=sys.AuxADCData[0];
-//	sys.sensors.ADCData[7]=sys.AuxADCData[1];
+	ADCReadVol(&(sys.sensors.ADCData[8]));	
 }
 
 void SendSensorData(void)

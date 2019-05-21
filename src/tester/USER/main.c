@@ -22,7 +22,7 @@ u8 currKey=0;
 s32 lastWheel=0;
 s32 currWheel=0;
 
-u8 currpage;
+s8 currpage;
 systemState sys;
 
 u8 package[256];
@@ -42,7 +42,7 @@ int main(void)
 	PWMInit();
 	LinkInit();
 	RTCInit();
-	//ADCInit();
+	ADCInit();
 		
 	OledClear(0x00);
 	OledDispString(0,0,"== SB Motor Tester ==",0);
