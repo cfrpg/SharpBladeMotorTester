@@ -215,10 +215,10 @@ s32 ADSReadData(void)
 	ADSDelayData();	
 	t=ADSReceiveByte();
 	data|=(t<<16);
-	ADSDelayData();	
+	//ADSDelayData();	
 	t=ADSReceiveByte();
 	data|=(t<<8);
-	ADSDelayData();	
+	//ADSDelayData();	
 	t=ADSReceiveByte();
 	data|=(t);
 	ADS_CS=1;

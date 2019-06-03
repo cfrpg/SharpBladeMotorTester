@@ -59,7 +59,7 @@ namespace SBMTCS
 			sensorDataList.DataContext = sensorDatas;
 			pathText.DataContext = config;
 
-			portScanner = new AdvancedPortScanner(115200, 1024, 3);
+			portScanner = new AdvancedPortScanner(921600, 1024, 3);
 			portScanner.OnFindPort += PortScanner_OnFindPort;
 			portScanner.Start();
 

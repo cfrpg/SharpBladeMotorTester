@@ -23,7 +23,7 @@ void ADCInit(void)
 	ac.ADC_Mode=ADC_Mode_Independent;
 	ac.ADC_TwoSamplingDelay=ADC_TwoSamplingDelay_20Cycles;
 	ac.ADC_DMAAccessMode=ADC_DMAAccessMode_Disabled;
-	ac.ADC_Prescaler=ADC_Prescaler_Div8;
+	ac.ADC_Prescaler=ADC_Prescaler_Div4;
 	ADC_CommonInit(&ac);
 	
 	ai.ADC_Resolution=ADC_Resolution_12b;
@@ -42,9 +42,9 @@ void ADCReadVol(float res[])
 	u8 i,j;
 	for(j=0;j<2;j++)
 	{
-		ADC_RegularChannelConfig(ADC1,14+j,1,ADC_SampleTime_480Cycles);
+		ADC_RegularChannelConfig(ADC1,14+j,1,ADC_SampleTime_3Cycles);
 		tmp=0;
-		for(i=0;i<64;i++)
+		for(i=0;i<128;i++)
 		{
 			ADC_ClearFlag(ADC1,ADC_FLAG_EOC);
 			
@@ -53,7 +53,7 @@ void ADCReadVol(float res[])
 			tmp+=ADC_GetConversionValue(ADC1)&0x0FFF;			
 			//delay_ms(1);
 		}
-		tmp>>=6;
+		tmp>>=7;
 		res[j]=tmp*3.3/4096;
 	}
 	//printf("ad %d %f %f\r\n",tmp,res[0],res[1]);

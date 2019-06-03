@@ -83,13 +83,13 @@ int main(void)
 	//RTCSetTime(16,48,0);
 	while(1)
 	{	
-		if(tick[0]>500)
+		if(tick[0]>=500)
 		{
 			tick[0]=0;
 			LEDFlip();	
 			PagesDrawStatusBar();
 		}
-		if(tick[1]>20)
+		if(tick[1]>=20)
 		{
 			tick[1]=0;
 			if(sblinkReady)
@@ -102,7 +102,7 @@ int main(void)
 			UpdateSensors();
 			
 		}
-		if(tick[2]>50)
+		if(tick[2]>=50)
 		{
 			tick[2]=0;			
 			currKey=GPGetData();

@@ -27,7 +27,7 @@ void LinkInit(void)
 	
 	gi.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6;
 	gi.GPIO_Mode = GPIO_Mode_AF;
-	gi.GPIO_Speed = GPIO_Speed_50MHz;
+	gi.GPIO_Speed = GPIO_Speed_100MHz;
 	gi.GPIO_OType = GPIO_OType_PP;
 	gi.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_Init(GPIOD,&gi);
@@ -43,7 +43,7 @@ void LinkInit(void)
 	USART_Cmd(USART2, ENABLE);
 	
 	ni.NVIC_IRQChannel=USART2_IRQn;
-	ni.NVIC_IRQChannelPreemptionPriority=2;
+	ni.NVIC_IRQChannelPreemptionPriority=3;
 	ni.NVIC_IRQChannelSubPriority=1;
 	ni.NVIC_IRQChannelCmd=ENABLE;
 	NVIC_Init(&ni);
@@ -135,11 +135,22 @@ void USART2_IRQHandler(void)
 	
 	u8 b;
 	u8 curr=currBuff^1;
+
+	if (USART_GetFlagStatus(USART2, USART_FLAG_ORE) != RESET)
+	{
+		USART_ReceiveData(USART2);
+		USART_ClearFlag(USART2, USART_FLAG_ORE);
+		printf("ore");
+	}
+
 	if(USART_GetITStatus(USART2,USART_IT_RXNE)!=RESET)
 	{
-		USART_ClearITPendingBit(USART2,USART_IT_RXNE);		
+		USART_ClearFlag(USART2, USART_FLAG_RXNE);
+		USART_ClearITPendingBit(USART2,USART_IT_RXNE);
+		
 		b=USART_ReceiveData(USART2);
-		//printf("RX %d %x\r\n",recState,b);
+		printf("%x\r\n",b);
+		//return;
 		if(recState!=0)
 		{
 			if(recState<9)

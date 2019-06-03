@@ -155,7 +155,7 @@ namespace SBMTCS
             bool received = false;
             LinkEventArgs lea = new LinkEventArgs();
             int dataused;
-            while (offset < bufferSize && receivedPackageQueue.Count < 6)
+            while (offset < bufferSize )
             {
                 PackageParseResult res = receivePackage.ReadFromBuffer(buffer, bufferSize, offset, out dataused);
                 switch (res)
