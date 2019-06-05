@@ -43,7 +43,7 @@ int main(void)
 	LinkInit();
 	RTCInit();
 	ADCInit();
-		
+	
 	OledClear(0x00);
 	OledDispString(0,0,"== SB Motor Tester ==",0);
 	OledDispString(5,4,"Loading...",0);
@@ -72,7 +72,9 @@ int main(void)
 	while(tick[0]<200);
 	LEDSet(1);
 	OledClear(0x00);	
-	ADSStartUp(0,ADS1256_1000SPS);
+	//ADSStartUp(0,ADS1256_1000SPS);
+	
+	
 	
 	lastKey=0xFF;
 	currpage=0;

@@ -43,6 +43,20 @@ void ADS1256Init(void)
 
 	ADSCurrCh=0;
 	
+	ADS_CS=0;
+	ADS_SYNC=1;
+	ADS_RST=1;
+	ADS_CS=1;
+	ADS_SCK=0;
+	ADS_DI=1;	
+	
+	
+//	ADSStartUp(0,ADS1256_5SPS);
+//	delay_ms(100);
+//	ADSStartUp(0,ADS1256_5SPS);
+//	delay_ms(100);
+//	ADSStartUp(0,ADS1256_5SPS);
+//	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG,ENABLE);
 	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD,EXTI_PinSource0);
 	
@@ -58,12 +72,7 @@ void ADS1256Init(void)
 	ni.NVIC_IRQChannelSubPriority=2;
 	NVIC_Init(&ni);
 	
-	ADS_CS=0;
-	ADS_SYNC=1;
-	ADS_RST=1;
-	ADS_CS=1;
-	ADS_SCK=0;
-	ADS_DI=1;	
+
 }
 
 void ADSDelaySCK(void)
@@ -74,7 +83,7 @@ void ADSDelaySCK(void)
 
 void ADSDelayData(void)
 {
-	delay_us(9);
+	delay_us(10);
 }
 
 void ADSSendByte(u8 b)
@@ -114,68 +123,6 @@ u8 ADSReceiveByte(void)
 	return b;
 }
 
-void ADSWriteReg(u8 id,u8 v)
-{
-	ADS_CS=0;
-	ADSSendByte(ADS_CMD_WREG|id);
-	ADSSendByte(0x00);
-	ADSSendByte(v);
-	ADS_CS=1;
-}
-
-u8 ADSReadReg(u8 id)
-{
-	u8 b;
-	ADS_CS=0;
-	ADSSendByte(ADS_CMD_RREG|id);
-	ADSSendByte(0);
-	ADSDelayData();
-	b=ADSReceiveByte();
-	ADS_CS=1;
-	return b;
-}
-
-void ADSSendCmd(u8 cmd)
-{
-	ADS_CS=0;
-	ADSSendByte(cmd);
-	ADS_CS=1;
-}
-
-void ADSStartUp(u8 gain,u8 rate)
-{
-	u8 buf[4]={0};
-	//STATUS:ORDER,ACAL,BUFEN
-	buf[0]=(0<<3)|(1<<2)|(0<<1);
-	//MUX
-	buf[1]=0x08;
-	//ADCON
-	buf[2]=(0<<5)|(0<<3)|(gain);
-	//DRATE
-	buf[3]=rate;
-	ADS_CS=0;
-	ADSSendByte(ADS_CMD_WREG|0);
-	ADSSendByte(0x03);
-	ADSSendByte(buf[0]);
-	ADSSendByte(buf[1]);
-	ADSSendByte(buf[2]);
-	ADSSendByte(buf[3]);
-	ADS_CS=1;
-	delay_ms(10);
-	ADSSendCmd(ADS_CMD_SELFCAL);
-	delay_ms(100);	
-}
-
-void ADSSetChannel(u8 ch)
-{
-	ADSWriteReg(ADS_REG_MUX,(ch<<4)|0x08);
-}
-
-void ADSSetDiffChannel(u8 ch)
-{
-	ADSWriteReg(ADS_REG_MUX,((ch<<1)<<4)|((ch<<1)-1));
-}
-
 void ADSWaitDRDYLow(void)
 {	
 	u32 t=0;
@@ -206,6 +153,71 @@ void ADSWaitDRDYHigh(void)
 	//printf("%d\r\n",t);
 }
 
+void ADSWriteReg(u8 id,u8 v)
+{
+	ADS_CS=0;
+	ADSSendByte(ADS_CMD_WREG|id);
+	ADSSendByte(0x00);
+	ADSSendByte(v);
+	ADS_CS=1;
+}
+
+u8 ADSReadReg(u8 id)
+{
+	u8 b;
+	ADS_CS=0;
+	ADSSendByte(ADS_CMD_RREG|id);
+	ADSSendByte(0);
+	ADSDelayData();
+	b=ADSReceiveByte();
+	ADS_CS=1;	
+	return b;
+}
+
+void ADSSendCmd(u8 cmd)
+{
+	ADS_CS=0;
+	ADSSendByte(cmd);
+	ADS_CS=1;
+}
+
+void ADSStartUp(u8 gain,u8 rate)
+{
+	u8 buf[4]={0};
+	//STATUS:ORDER,ACAL,BUFEN
+	buf[0]=(0<<3)|(1<<2)|(0<<1);
+	//MUX
+	buf[1]=0x08;
+	//ADCON
+	buf[2]=(0<<5)|(0<<3)|(gain);
+	//DRATE
+	buf[3]=rate;	
+	ADS_CS=0;
+	ADSSendByte(ADS_CMD_WREG|0);
+	ADSSendByte(0x03);
+	ADSSendByte(buf[0]);
+	ADSSendByte(buf[1]);
+	ADSSendByte(buf[2]);
+	ADSSendByte(buf[3]);
+	ADS_CS=1;
+	delay_ms(10);
+	ADSSendCmd(ADS_CMD_SELFCAL);
+	delay_ms(100);		
+	printf("%d %d %d %d %d\r\n",rate,ADSReadReg(0x00),ADSReadReg(0x01),ADSReadReg(0x02),ADSReadReg(0x03));
+}
+
+void ADSSetChannel(u8 ch)
+{
+	ADSWriteReg(ADS_REG_MUX,(ch<<4)|0x08);
+}
+
+void ADSSetDiffChannel(u8 ch)
+{
+	ADSWriteReg(ADS_REG_MUX,((ch<<1)<<4)|((ch<<1)-1));
+}
+
+
+
 s32 ADSReadData(void)
 {
 	u32 data=0;
@@ -215,10 +227,10 @@ s32 ADSReadData(void)
 	ADSDelayData();	
 	t=ADSReceiveByte();
 	data|=(t<<16);
-	//ADSDelayData();	
+	ADSDelayData();	
 	t=ADSReceiveByte();
 	data|=(t<<8);
-	//ADSDelayData();	
+	ADSDelayData();	
 	t=ADSReceiveByte();
 	data|=(t);
 	ADS_CS=1;
@@ -232,15 +244,15 @@ s32 ADSReadChannel(u8 ch)
 	ADSWaitDRDYHigh();
 	ADSWaitDRDYLow();	
 	ADSSetChannel(ch);
-	delay_us(5);	
+	delay_us(5);
 	ADSSendCmd(ADS_CMD_SYNC);
-	delay_us(5);	
+	delay_us(5);
 	ADSSendCmd(ADS_CMD_WAKEUP);
 	delay_us(25);
 	ADSReadData();
 	ADSWaitDRDYHigh();
 	ADSWaitDRDYLow();
-	return ADSReadData();	
+	return ADSReadData();
 }
 
 s32 ADSReadCurrChannel(void)
@@ -255,7 +267,7 @@ s32 ADSReadCurrChannel(void)
 
 void ADSReadAllChannel(s32 data[])
 {
-	u8 i;	
+	u8 i;
 	for(i=0;i<8;i++)
 		data[i]=ADSBuff[i];	
 }

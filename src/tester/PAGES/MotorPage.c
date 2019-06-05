@@ -51,26 +51,11 @@ void PageUpdate_Motor(void)
 	{
 		case 0://normal
 			if(armed)
-			{				
+			{
 				if(motor.lastarmed==0)
 				{
 					OledDispString(0,15,"    ",0);
 					OledDispString(0,2,"ARMED   ",0);
-				}
-				if(currWheel>lastWheel)
-					sys.pwm[0]+=10;
-				if(currWheel<lastWheel)
-					sys.pwm[0]-=10;
-				if(sys.pwm[0]>10000)
-					sys.pwm[0]=0;
-				if(sys.pwm[0]>1000)
-					sys.pwm[0]=1000;
-				
-				PWMSet(sys.pwm[0],sys.pwm[1],sys.pwm[2],sys.pwm[3]);
-				if(key&KEY_D)
-				{
-					sys.pwm[0]=0;
-					PWMDisarm();
 				}
 			}
 			else
@@ -85,10 +70,6 @@ void PageUpdate_Motor(void)
 					motor.state=1;
 					PWMArm();
 					PWMSet(1000,1000,1000,1000);
-				}
-				if(key&KEY_D)
-				{
-					PWMArm();
 				}
 			}
 		break;

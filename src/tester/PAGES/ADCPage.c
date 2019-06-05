@@ -29,8 +29,7 @@ void PageInit_ADC(u8 f)
 void PageUpdate_ADC(void)
 {
 	u8 i;
-	u8 key=currKey&(currKey^lastKey);
-	u16 cpu=cpucnt;
+	u8 key=currKey&(currKey^lastKey);	
 //	ADSReadAllChannel(sys.ADCRawData);
 //	for(i=0;i<8;i++)
 //	{
@@ -43,7 +42,7 @@ void PageUpdate_ADC(void)
 	if(key&KEY_C)
 		adcp.state=1;
 	if(key&KEY_B)
-		ADSStartUp(0,ADS1256_1000SPS);
+		ADSStartUp(0,ADS1256_5SPS);
 	for(i=0;i<8;i++)
 	{
 		if(adcp.state==0)
@@ -58,8 +57,7 @@ void PageUpdate_ADC(void)
 	for(i=0;i<2;i++)
 	{
 		OledDispFixed(4,i+10,(s32)(sys.sensors.ADCData[i+8]*1e6f),6,11,0);
-	}
-	cpu=(cpucnt+10000-cpu)%10000;
+	}	
 	OledDispInt(4,13,ADSCpu2,4,0);
 	if(key&KEY_LEFT)
 		PagesNext(-1);
