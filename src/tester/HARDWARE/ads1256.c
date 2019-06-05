@@ -50,13 +50,6 @@ void ADS1256Init(void)
 	ADS_SCK=0;
 	ADS_DI=1;	
 	
-	
-//	ADSStartUp(0,ADS1256_5SPS);
-//	delay_ms(100);
-//	ADSStartUp(0,ADS1256_5SPS);
-//	delay_ms(100);
-//	ADSStartUp(0,ADS1256_5SPS);
-//	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG,ENABLE);
 	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOD,EXTI_PinSource0);
 	
@@ -83,7 +76,7 @@ void ADSDelaySCK(void)
 
 void ADSDelayData(void)
 {
-	delay_us(10);
+	delay_us(9);
 }
 
 void ADSSendByte(u8 b)
@@ -203,7 +196,7 @@ void ADSStartUp(u8 gain,u8 rate)
 	delay_ms(10);
 	ADSSendCmd(ADS_CMD_SELFCAL);
 	delay_ms(100);		
-	printf("%d %d %d %d %d\r\n",rate,ADSReadReg(0x00),ADSReadReg(0x01),ADSReadReg(0x02),ADSReadReg(0x03));
+	//printf("%d %d %d %d %d\r\n",rate,ADSReadReg(0x00),ADSReadReg(0x01),ADSReadReg(0x02),ADSReadReg(0x03));
 }
 
 void ADSSetChannel(u8 ch)
@@ -227,10 +220,10 @@ s32 ADSReadData(void)
 	ADSDelayData();	
 	t=ADSReceiveByte();
 	data|=(t<<16);
-	ADSDelayData();	
+	//ADSDelayData();	
 	t=ADSReceiveByte();
 	data|=(t<<8);
-	ADSDelayData();	
+	//ADSDelayData();	
 	t=ADSReceiveByte();
 	data|=(t);
 	ADS_CS=1;

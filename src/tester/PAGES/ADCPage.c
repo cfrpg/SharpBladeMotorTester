@@ -17,9 +17,11 @@ void PageInit_ADC(u8 f)
 	PagesDrawHeader(ADCPage,"ADC");
 	for(i=0;i<10;i++)
 	{
-		OledDispString(0,i+2,"Ch",0);
+		OledDispString(0,i+2,"Ch :",0);
 		OledDispInt(2,i+2,i,1,0);
 	}
+	OledDispString(4,10,"DISABLED",0);
+	OledDispString(4,11,"DISABLED",0);
 	OledDispString(0,13,"CPU:",0);
 	OledDispString(0,15,"RAW",0);
 	OledDispString(15,15,"SCALED",0);
@@ -42,7 +44,7 @@ void PageUpdate_ADC(void)
 	if(key&KEY_C)
 		adcp.state=1;
 	if(key&KEY_B)
-		ADSStartUp(0,ADS1256_5SPS);
+		ADSStartUp(0,ADS_Primary_Rate);
 	for(i=0;i<8;i++)
 	{
 		if(adcp.state==0)
@@ -54,10 +56,10 @@ void PageUpdate_ADC(void)
 			OledDispFixed(4,i+2,(s32)(sys.sensors.ADCData[i]*1e6f),6,11,0);
 		}
 	}	
-	for(i=0;i<2;i++)
-	{
-		OledDispFixed(4,i+10,(s32)(sys.sensors.ADCData[i+8]*1e6f),6,11,0);
-	}	
+//	for(i=0;i<2;i++)
+//	{
+//		OledDispFixed(4,i+10,(s32)(sys.sensors.ADCData[i+8]*1e6f),6,11,0);
+//	}	
 	OledDispInt(4,13,ADSCpu2,4,0);
 	if(key&KEY_LEFT)
 		PagesNext(-1);

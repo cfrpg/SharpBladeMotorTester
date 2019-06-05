@@ -11,13 +11,14 @@ void UpdateADC(void)
 	{		
 		sys.sensors.ADCData[i]=((float)sys.ADCRawData[i])/(1<<23)*5;
 	}
-	ADCReadVol(&(sys.sensors.ADCData[8]));	
+	//ADCReadVol(&(sys.sensors.ADCData[8]));	
 }
 
 void SendSensorData(void)
 {
 	sys.sensors.data[0]=sys.rpm;
 	sys.sensors.data[1]=sys.pwm[0];
+	sys.sensors.data[2]=ADSCpu2;
 	sys.sensors.header.time=LinkPackTime();
 	LinkSendData(&sys.sensors,sizeof(SensorDataPackage));
 }
