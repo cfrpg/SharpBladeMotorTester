@@ -1,5 +1,5 @@
 #include "pages.h"
-
+#include "pwm.h"
 
 void PagesInit(void)
 {	
@@ -59,17 +59,36 @@ void PagesNext(s8 d)
 
 void PagesDrawStatusBar(void)
 {	
-	OledDispString(0,0,"  -  -     :  :      ",0);
-	OledDispInt(0,0,time.year,2,0);
-	OledDispInt(3,0,time.month,2,0);
-	OledDispInt(6,0,time.day,2,0);
-	OledDispInt(9,0,time.hour,2,0);
-	OledDispInt(12,0,time.min,2,0);
-	OledDispInt(15,0,time.sec,2,0);
+	//OledDispString(0,0,"  -  -     :  :       ",0);
+	//OledDispInt(0,0,time.year,2,0);
+	//OledDispInt(3,0,time.month,2,0);
+	//OledDispInt(6,0,time.day,2,0);
+	OledDispString(0,0,"  :  :        ",0);
+	OledDispInt(0,0,time.hour,2,0);
+	OledDispInt(3,0,time.min,2,0);
+	OledDispInt(6,0,time.sec,2,0);
+	if(PWMIsArmed())
+	{
+		OledDispString(9,0,"ARMED",0);
+	}
+}
+
+void commonUpdate(void)
+{
+	if(PWMIsArmed())
+	{
+		
+	}
+	else
+	{
+		
+	}		
+	
 }
 
 void PagesUpdate(void)
 {	
+	
 	switch(currpage)
 	{
 		case MainPage:

@@ -1,5 +1,8 @@
 #include "pages.h"
 
+#define CURR_F 15.3413686
+#define VOL_F 3.0;
+
 struct
 {
 	u8 state;
