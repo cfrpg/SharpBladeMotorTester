@@ -69,6 +69,10 @@ void PageUpdate_Motor(void)
 				{
 					motor.state=1;
 					PWMArm();
+					sys.pwm[0]=1000;
+					sys.pwm[1]=1000;
+					sys.pwm[2]=1000;
+					sys.pwm[3]=1000;
 					PWMSet(1000,1000,1000,1000);
 				}
 			}
@@ -78,7 +82,11 @@ void PageUpdate_Motor(void)
 			OledDispString(0,15,"SET ",0);
 			if(key&KEY_A)
 			{
-				motor.state=2;				
+				motor.state=2;	
+				sys.pwm[0]=0;		
+				sys.pwm[1]=0;
+				sys.pwm[2]=0;
+				sys.pwm[3]=0;				
 				PWMSet(0,0,0,0);
 			}
 		break;

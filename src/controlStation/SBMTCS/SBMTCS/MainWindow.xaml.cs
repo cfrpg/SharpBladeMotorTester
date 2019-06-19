@@ -53,13 +53,17 @@ namespace SBMTCS
 					Offset = config.Offsets[i],
 					Scale = config.Scales[i],
 					LogEnabled = config.LogEnabled[i],
-					Name = config.Names[i]
+					Name = config.Names[i],
+					Lpf = config.Lpf[i],
+					FilterEnabled = config.FilterEnabled[i],
+					Config = config
 				});
 			}
 			sensorDataList.DataContext = sensorDatas;
 			pathText.DataContext = config;
+			filterGrid.DataContext = config;
 
-			portScanner = new AdvancedPortScanner(921600, 1024, 3);
+			portScanner = new AdvancedPortScanner(115200, 1024, 3);
 			portScanner.OnFindPort += PortScanner_OnFindPort;
 			portScanner.Start();
 
@@ -115,11 +119,16 @@ namespace SBMTCS
 					if(isLogging)
 					{
 						logWriter.Write(package.Time.ToString("HH:mm:ss.fff"));
-						for (int i = 0; i < 12; i++)
+						for (int i = 0; i < 14; i++)
 						{
 							if (sensorDatas[i].LogEnabled)
-							{								
-								logWriter.Write("\t"+sensorDatas[i].ScaledValue);
+							{
+								logWriter.Write("\t" + sensorDatas[i].ScaledValue);
+								logWriter.Write("\t" + sensorDatas[i].RawValue);
+								if (sensorDatas[i].Lpf>0)
+								{
+									logWriter.Write("\t" + sensorDatas[i].LpfValue);
+								}
 							}
 						}
 						logWriter.Write(Environment.NewLine);
@@ -163,6 +172,8 @@ namespace SBMTCS
 				config.Offsets[i] = sensorDatas[i].Offset;
 				config.Scales[i] = sensorDatas[i].Scale;
 				config.LogEnabled[i] = sensorDatas[i].LogEnabled;
+				config.FilterEnabled[i] = sensorDatas[i].FilterEnabled;
+				config.Lpf[i] = sensorDatas[i].Lpf;
 			}
 			XmlSerializer xs = new XmlSerializer(typeof(Config));
 			Stream s = new FileStream(Environment.CurrentDirectory + "\\config.xml", FileMode.Create, FileAccess.Write, FileShare.None);
@@ -209,13 +220,18 @@ namespace SBMTCS
 			{
 				logBtn.Content = "Stop Log";				
 				sensorDataList.IsEnabled = false;
-				logWriter = new StreamWriter(config.LogPath + "\\" + DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss") + ".txt");
+                logWriter = new StreamWriter(config.LogPath + "\\" + DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss") + "_" + nameText.Text + ".txt");
 				logWriter.Write("Time");
-				for (int i = 0; i < 12; i++)
+				for (int i = 0; i < sensorDatas.Count; i++)
 				{
+					sensorDatas[i].FilterCounter = 999;
+					sensorDatas[i].DropoutCount = 0;
 					if(sensorDatas[i].LogEnabled)
 					{
-						logWriter.Write("\t"+sensorDatas[i].Name);
+						logWriter.Write("\t" + sensorDatas[i].Name);
+						logWriter.Write("\t" + sensorDatas[i].Name+"_RAW");
+						if (sensorDatas[i].Lpf>0)
+							logWriter.Write("\t" + sensorDatas[i].Name+"_LPF");
 					}
 				}
 				logWriter.Write(Environment.NewLine);

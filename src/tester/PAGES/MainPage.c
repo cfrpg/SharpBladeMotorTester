@@ -1,9 +1,10 @@
 #include "pages.h"
 #include "ads1256.h"
+#include "pwm.h"
 
-#define CURR_F		15.3413686
-#define VOL_F		3.0
-#define TORQUE_F	0.1
+#define CURR_F		15.3413686f
+#define VOL_F		3.0f
+#define TORQUE_F	0.04f
 
 #define CURR_CH		1
 #define	VOL_CH		3
@@ -44,26 +45,38 @@ void PageUpdate_main(void)
 {
 	u8 key=currKey&(currKey^lastKey);
 	float in,out;
+	if(PWMIsArmed())
+	{
+		if(key&KEY_UP)
+			sys.pwm[0]+=100;
+		if(key&KEY_DOWN)
+			sys.pwm[0]-=100;
+		if(sys.pwm[0]>10000)
+			sys.pwm[0]=0;
+		if(sys.pwm[0]>1000)
+			sys.pwm[0]=1000;		
+		PWMSet(sys.pwm[0],sys.pwm[1],sys.pwm[2],sys.pwm[3]);		
+	}
 	OledDispFixed(5,2,sys.pwm[0],1,5,0);
 	OledDispInt(5,3,sys.rpm,7,0);
 	OledDispInt(10,13,ADSCpu2,7,0);
 	if(mainp.disp)
 	{
-		OledDispFixed(5,4,(s32)(sys.sensors.ADCData[VOL_CH]*1e6),6,11,0);
-		OledDispFixed(5,5,(s32)(sys.sensors.ADCData[CURR_CH]*1e6),6,11,0);
-		OledDispFixed(5,6,(s32)(sys.sensors.ADCData[TORQUE_CH]*1e6),6,11,0);
+		OledDispFixed(5,4,(s32)(sys.sensors.ADCData[VOL_CH]*1e6f),6,11,0);
+		OledDispFixed(5,5,(s32)(sys.sensors.ADCData[CURR_CH]*1e6f),6,11,0);
+		OledDispFixed(5,6,(s32)(sys.sensors.ADCData[TORQUE_CH]*1e6f),6,11,0);
 	}
 	else
 	{
-		OledDispFixed(5,4,(s32)(sys.sensors.ADCData[VOL_CH]*1e6*VOL_F),6,11,0);
-		OledDispFixed(5,5,(s32)(sys.sensors.ADCData[CURR_CH]*1e6*CURR_F),6,11,0);
-		OledDispFixed(5,6,(s32)(sys.sensors.ADCData[TORQUE_CH]*1e6*TORQUE_F),6,11,0);
+		OledDispFixed(5,4,(s32)(sys.sensors.ADCData[VOL_CH]*1e6f*VOL_F),6,11,0);
+		OledDispFixed(5,5,(s32)(sys.sensors.ADCData[CURR_CH]*1e6f*CURR_F),6,11,0);
+		OledDispFixed(5,6,(s32)(sys.sensors.ADCData[TORQUE_CH]*1e6f*TORQUE_F),6,11,0);
 	}
 	in=sys.sensors.ADCData[VOL_CH]*VOL_F*sys.sensors.ADCData[CURR_CH]*CURR_F;
-	out=sys.sensors.ADCData[TORQUE_CH]*TORQUE_F*sys.rpm/9.549;
-	OledDispFixed(4,9,(s32)(in*1e6),6,11,0);
-	OledDispFixed(4,10,(s32)(out*1e6),6,11,0);
-	OledDispFixed(4,11,(s32)(out/in*1e6),6,11,0);
+	out=sys.sensors.ADCData[TORQUE_CH]*TORQUE_F*sys.rpm/9.549f;
+	OledDispFixed(4,9,(s32)(in*1e6f),6,11,0);
+	OledDispFixed(4,10,(s32)(out*1e6f),6,11,0);
+	OledDispFixed(4,11,(s32)(out/in*1e6f),6,11,0);
 	if(key&KEY_B)
 		ADSStartUp(0,ADS_Primary_Rate);
 	if(key&KEY_C)

@@ -8,7 +8,7 @@ void EOInit(void)
 	GPIO_InitTypeDef gi;
 	
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM12, ENABLE);	
-	ti.TIM_Period = 9999; //100ms
+	ti.TIM_Period = 2999; //300ms
 	ti.TIM_Prescaler =8400-1;
 	ti.TIM_ClockDivision = TIM_CKD_DIV1; 
 	ti.TIM_CounterMode = TIM_CounterMode_Up; 

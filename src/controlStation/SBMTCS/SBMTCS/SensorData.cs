@@ -16,16 +16,53 @@ namespace SBMTCS
 		double scale;
 		bool logEnabled;
 		double scaledValue;
+		double lpfValue;
+		double rawValue;
+
+		bool filterEnabled;
+		double lpf;
+		int filterCounter;
+		int dropoutCount;
 
 		string name;
+
+		Config config;
 
 		public double Value
 		{
 			get => value;
 			set
 			{
-				this.value = value;
+				rawValue = value;
+				if(!filterEnabled)
+					this.value = value;
+				else
+				{
+					if(value-this.value>config.FilterH||this.value-value>config.FilterL)
+					{
+                        if(name=="Sensor 4")
+                        {
+
+                        }
+						filterCounter++;
+						if(filterCounter>config.FilterDepth)
+						{
+							this.value = value;
+							filterCounter = 0;
+						}
+                        else
+                        {
+                            DropoutCount++;
+                        }
+					}
+					else
+					{
+						this.value = value;
+						filterCounter = 0;
+					}
+				}
 				scaledValue = (this.value + offset) * scale;
+				LpfValue = lpf * LpfValue + (1 - lpf) * scaledValue;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ScaledValue"));
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Value"));
 			}
@@ -71,6 +108,43 @@ namespace SBMTCS
 			{
 				name = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Name"));
+			}
+		}
+
+		public bool FilterEnabled
+		{
+			get => filterEnabled;
+			set
+			{
+				filterEnabled = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("FilterEnabled"));
+			}
+		}
+		public double Lpf
+		{
+			get => lpf;
+			set
+			{
+				lpf = value;
+				if (lpf < 1e-6)
+					lpf = 0;
+				if (lpf > 1)
+					lpf = 1;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Lpf"));
+			}
+		}
+
+		public int FilterCounter { get => filterCounter; set => filterCounter = value; }
+		public double LpfValue { get => lpfValue; set => lpfValue = value; }
+		public Config Config { get => config; set => config = value; }
+		public double RawValue { get => rawValue; set => rawValue = value; }
+		public int DropoutCount
+		{
+			get => dropoutCount;
+			set
+			{
+				dropoutCount = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("DropoutCount"));
 			}
 		}
 

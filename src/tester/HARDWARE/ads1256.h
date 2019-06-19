@@ -62,7 +62,7 @@
 #define ADS_REG_FSC1    9 // xxH
 #define ADS_REG_FSC2    10 // xxH
 
-#define ADS_Primary_Rate ADS1256_500SPS
+#define ADS_Primary_Rate ADS1256_1000SPS
 
 extern u16 cpucnt;
 extern u16 ADSCpu2;
