@@ -30,7 +30,7 @@ void PageInit_Motor(u8 f)
 	OledDispString(0,3,"THRO:",0);
 	OledDispString(0,4,"RPM :",0);
 	OledDispString(0,5,"VOLT:",0);
-	OledDispString(0,6,"CURR:",0);
+	OledDispString(0,6,"CURR:",0);	
 	if(PWMIsArmed())
 	{
 		OledDispString(0,15,"    ",0);
@@ -57,6 +57,15 @@ void PageUpdate_Motor(void)
 					OledDispString(0,15,"    ",0);
 					OledDispString(0,2,"ARMED   ",0);
 				}
+				if(key&KEY_UP)
+					sys.pwm[0]+=100;
+				if(key&KEY_DOWN)
+					sys.pwm[0]-=100;
+				if(sys.pwm[0]>10000)
+					sys.pwm[0]=0;
+				if(sys.pwm[0]>1000)
+					sys.pwm[0]=1000;		
+		
 			}
 			else
 			{
@@ -112,5 +121,4 @@ void PageUpdate_Motor(void)
 		if(key&KEY_RIGHT)
 			PagesNext(1);
 	}
-
 }

@@ -19,6 +19,9 @@ typedef struct
 	float AuxADCData[2];
 	SensorDataPackage sensors;
 	s32 rpm;
+	u32 EOcnt;
+	u32 EOtime;
+	u32 rpm2;
 	u16 pwm[4];
 	u8 adcEn;
 	

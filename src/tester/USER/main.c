@@ -14,6 +14,7 @@
 #include "sblink.h"
 #include "rtc.h"
 #include "adc.h"
+#include "ad7606.h"
 
 u16 tick[3]={0,0,0};
 u16 cpucnt=0;
@@ -37,7 +38,8 @@ int main(void)
 	LEDInit();
 	OledInit();
 	KeyInit();
-	ADS1256Init();
+	//ADS1256Init();
+	AD7606Init();
 	EOInit();
 	PWMInit();
 	LinkInit();
@@ -72,7 +74,7 @@ int main(void)
 	while(tick[0]<200);
 	LEDSet(1);
 	OledClear(0x00);	
-	ADSStartUp(0,ADS_Primary_Rate);
+	//ADSStartUp(0,ADS_Primary_Rate);
 	
 	lastKey=0xFF;
 	currpage=0;
