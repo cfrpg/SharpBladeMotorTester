@@ -36,32 +36,3 @@ void UpdateSensors(void)
 	SendSensorData();
 }
 
-void TIM8_BRK_TIM12_IRQHandler(void)
-{	
-	if (TIM_GetITStatus(TIM12, TIM_IT_Update) != RESET)
-	{		
-		TIM_ClearITPendingBit(TIM12, TIM_IT_Update);
-		//sys.rpm=EOcnt*60000/300/4;
-		sys.rpm=sys.EOcnt*50;
-		//printf("EO %d\r\n",EOcnt);
-		sys.EOcnt=0;
-		
-	}
-}
-
-//void EXTI4_IRQHandler(void)
-//{
-//	//EXTI_ClearITPendingBit(EXTI_Line4);
-//	delay_us(10);
-//	if(PDin(4)==0)
-//	{
-//		delay_us(10);
-//		if(PDin(4)==0)
-//		{
-//			EOcnt++;			
-//		}
-//		
-//	}	
-//	EXTI_ClearITPendingBit(EXTI_Line4);
-//}
-

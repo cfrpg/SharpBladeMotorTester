@@ -89,7 +89,6 @@ void AD7606Reset(void)
 
 void AD7606Start(void)
 {
-	u8 i;
 	ADI_CV=0;
 	ADI_CV=0;
 	ADI_CV=0;

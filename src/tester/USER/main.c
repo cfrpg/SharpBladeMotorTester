@@ -30,8 +30,6 @@ u8 package[256];
 
 int main(void)
 {
-	s16 i;
-	u8 key;
 	delay_init(168);
 	uart_init(115200);
 	MainClockInit();
