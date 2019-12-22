@@ -79,8 +79,8 @@ int main(void)
 	PagesInit();
 	PagesChangeTo(MainPage);
 	
-	//RTCSetDate(19,5,4);
-	//RTCSetTime(16,48,0);
+	//RTCSetDate(19,12,19);
+	//RTCSetTime(15,59,0);
 	while(1)
 	{	
 		if(tick[0]>=500)
